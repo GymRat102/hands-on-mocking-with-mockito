@@ -1,6 +1,7 @@
 package de.rieckpil.courses.stubbing;
 
 import de.rieckpil.courses.*;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -14,6 +15,7 @@ import org.mockito.quality.Strictness;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +61,7 @@ public class RegistrationServiceTest {
       .isBanned(ArgumentMatchers.anyString(), ArgumentMatchers.isNull())).thenReturn(true);
 
     Mockito.when(bannedUsersClient
-      .isBanned(ArgumentMatchers.argThat(s -> s.length() <= 3), ArgumentMatchers.isNull())).thenReturn(false);
+      .isBanned(argThat(s -> s.length() <= 3), ArgumentMatchers.isNull())).thenReturn(false);
 
     System.out.println(bannedUsersClient.isBanned("duke", new Address()));
     System.out.println(bannedUsersClient.isBanned("shdshfhsdlf", null));
@@ -77,8 +79,27 @@ public class RegistrationServiceTest {
       System.out.println(bannedUsersClient.isBanned("duke", new Address())));
   }
 
+  // TODO: Feb 28
+  // mock 一个方法调用的异常抛出
+  // 断言一个方法执行的异常抛出
+  @Test
+  void learnBasicStubbingUsageThrows() {
+    when(bannedUsersClient.isBanned(eq("duke"), any())).thenThrow(new RuntimeException("remote system is down!"));
+
+    assertThrows(RuntimeException.class, () -> bannedUsersClient.isBanned("duke", new Address()));
+  }
+
   @Test
   void basicStubbingUsageCallRealMethod() {
+    when(bannedUsersClient.isBanned(eq("duke"), any(Address.class))).thenCallRealMethod();
+
+    System.out.println(bannedUsersClient.isBanned("duke", new Address()));
+  }
+
+  // TODO: Feb 28
+  // 使用 .thenCallRealMethod() 能够调用真实的方法
+  @Test
+  void learnBasicStubbingUsageCallRealMethod() {
     when(bannedUsersClient.isBanned(eq("duke"), any(Address.class))).thenCallRealMethod();
 
     System.out.println(bannedUsersClient.isBanned("duke", new Address()));
@@ -113,6 +134,33 @@ public class RegistrationServiceTest {
     });
 
     System.out.println(userRepository.save(new User()).getId());
+  }
+
+  @Test
+  void learnBasicStubbingUsageThenAnswer() {
+    when(bannedUsersClient.isBanned(eq("duke"), any(Address.class))).thenAnswer(invocationOnMock -> {
+      String username = invocationOnMock.getArgument(0);
+      Address address = invocationOnMock.getArgument(1);
+      return username.contains("d") && address.getCity().contains("d");
+    });
+
+    Address address = new Address();
+    address.setCity("Berlin");
+    System.out.println(bannedUsersClient.isBanned("duke", address));
+
+    Address addressTwo = new Address();
+    addressTwo.setCity("London");
+    System.out.println(bannedUsersClient.isBanned("duke", addressTwo));
+
+    when(userRepository.save(argThat(user -> user.getUsername().contains("d")))).thenAnswer(invocation -> {
+      User user = invocation.getArgument(0);
+      user.setId(42L);
+      return user;
+    });
+
+    User user = new User();
+    user.setUsername("duan");
+    System.out.println(userRepository.save(user));
   }
 
   @Test

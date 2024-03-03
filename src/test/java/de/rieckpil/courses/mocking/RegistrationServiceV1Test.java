@@ -9,6 +9,9 @@ import org.mockito.Mockito;
 
 class RegistrationServiceV1Test {
 
+  //  private UserRepository userRepository = Mockito.mock(UserRepository.class);
+//  private BannedUsersClient bannedUsersClient = Mockito.mock(BannedUsersClient.class);
+//  private RegistrationService cut = new RegistrationService(userRepository, bannedUsersClient);
   private UserRepository userRepository = Mockito.mock(UserRepository.class);
   private BannedUsersClient bannedUsersClient = Mockito.mock(BannedUsersClient.class);
   private RegistrationService cut = new RegistrationService(userRepository, bannedUsersClient);

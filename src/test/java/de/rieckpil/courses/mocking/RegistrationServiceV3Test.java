@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-// @RunWith(MockitoJUnitRunner.class)
-@ExtendWith(MockitoExtension.class)
+// @RunWith(MockitoJUnitRunner.class) Junit 4
+@ExtendWith(MockitoExtension.class) // Junit 5
 class RegistrationServiceV3Test {
 
   @Mock
