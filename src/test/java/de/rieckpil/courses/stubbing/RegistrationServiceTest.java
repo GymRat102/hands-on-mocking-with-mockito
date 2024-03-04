@@ -174,7 +174,33 @@ public class RegistrationServiceTest {
   }
 
   @Test
+  void learnShouldNotAllowBannedUserRegistration() {
+
+    when(bannedUsersClient.isBanned(eq("duke"), any(Address.class))).thenReturn(true);
+
+    assertThrows(IllegalArgumentException.class,
+      () -> cut.registerUser("duke", Utils.createContactInformation("weijian.duan@thoughtworks.com")));
+
+  }
+
+  @Test
   void shouldAllowRegistrationOfNewUser() {
+
+    when(bannedUsersClient.isBanned(eq("duke"), any(Address.class))).thenReturn(false);
+    when(userRepository.findByUsername("duke")).thenReturn(null);
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+      User user = invocation.getArgument(0);
+      user.setId(42L);
+      return user;
+    });
+
+    User user = cut.registerUser("duke", Utils.createContactInformation("duke@mockito.org"));
+
+    assertNotNull(user);
+  }
+
+  @Test
+  void learnShouldAllowRegistrationOfNewUser() {
 
     when(bannedUsersClient.isBanned(eq("duke"), any(Address.class))).thenReturn(false);
     when(userRepository.findByUsername("duke")).thenReturn(null);

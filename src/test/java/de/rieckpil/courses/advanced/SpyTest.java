@@ -35,4 +35,16 @@ class SpyTest {
 
     System.out.println(spiedList.get(0));
   }
+
+  @Test
+  void learnSpiedGotcha() {
+    List spiedList = Mockito.spy(ArrayList.class);
+
+    // Mockito.when(spiedList.get(0)).thenReturn(0);
+    Mockito.doReturn(0).when(spiedList).get(0);
+
+    System.out.println(spiedList.get(0));
+    System.out.println(spiedList.get(1));
+
+  }
 }

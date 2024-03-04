@@ -61,4 +61,23 @@ class StaticMethodMockTest {
 
     System.out.println(LocalDateTime.now());
   }
+
+  @Test
+  void learnMockStaticMethod() {
+
+    System.out.println("Before mock created: " + LocalDateTime.now());
+
+    MockedStatic<LocalDateTime> mock = Mockito.mockStatic(LocalDateTime.class);
+
+    System.out.println("After mock created, before stubbing: " + LocalDateTime.now());
+
+    mock.when(LocalDateTime::now).thenReturn(defaultLocalDateTime);
+
+    System.out.println("After stubbing: " + LocalDateTime.now());
+
+    mock.close();
+
+    System.out.println("After close: " + LocalDateTime.now());
+
+  }
 }

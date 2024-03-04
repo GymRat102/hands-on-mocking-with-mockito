@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EventNotifierTest {
@@ -34,13 +36,37 @@ class EventNotifierTest {
   }
 
   @Test
+  void learnVoidMethodsStubbing() {
+
+    Mockito
+      .doNothing()
+      .doThrow(new RuntimeException("Error"))
+      .when(eventNotifier).notifyNewUserCreation("duke");
+
+    eventNotifier.notifyNewUserCreation("duke");
+    assertThrows(RuntimeException.class, () -> eventNotifier.notifyNewUserCreation("duke"));
+  }
+
+  @Test
   void doReturnExample() {
 
     // Mockito.when(bannedUsersClient.amountOfBannedAccounts()).thenReturn(42);
 
-    Mockito.doReturn(42).when(bannedUsersClient).amountOfBannedAccounts();
+    doReturn(42).when(bannedUsersClient).amountOfBannedAccounts();
 
     // Mockito.doReturn("DUKE").when(bannedUsersClient).amountOfBannedAccounts();
+
+    System.out.println(bannedUsersClient.amountOfBannedAccounts());
+  }
+
+  @Test
+  void learnDoReturnExample() {
+    // type-safe mocking
+    // when(bannedUsersClient.amountOfBannedAccounts()).thenReturn(42);
+
+    // not type-safe
+    // doReturn(42).when(bannedUsersClient).amountOfBannedAccounts();
+    doReturn("haha").when(bannedUsersClient).amountOfBannedAccounts();
 
     System.out.println(bannedUsersClient.amountOfBannedAccounts());
   }
